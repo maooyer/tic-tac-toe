@@ -50,7 +50,7 @@ function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean; squares: string
 
   return (
     <>
-      <div className="status">{status}</div>
+      <h2 className="status">{status}</h2>
       {boardRows}
     </>
   );
@@ -87,11 +87,7 @@ export default function Game() {
     }
     return (
       <li key={move}>
-        {move === currentMove ? (
-          <>You are at move #{move}</>
-        ) : (
-          <button onClick={() => jumpTo(move)}>{description}</button>
-        )}
+        <button onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
   });
@@ -102,10 +98,12 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{ascending ? moves : moves.slice().reverse()}</ol>
+        <h2>You are at move #{currentMove}</h2>
+        <ol className='step-list'>{ascending ? moves : moves.slice().reverse()}</ol>
       </div>
       <div className="game-options">
-      <div><button onClick={toggleDisplayOrder}>{displayOrder}</button></div>
+        <h2>Game Options</h2>
+        <div><button onClick={toggleDisplayOrder}>{displayOrder}</button></div>
       </div>
     </div>
   );
