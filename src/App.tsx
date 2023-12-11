@@ -8,7 +8,7 @@ function Square({ value, onSquareClick }: { value: string; onSquareClick: () => 
   );
 }
 
-function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean; squares: string[]; onPlay: (squares: string[]) => void }) {
+function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean; squares: string[]; onPlay: (squares: string[], i: number) => void }) {
   function handleClick(i: number) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -19,7 +19,7 @@ function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean; squares: string
     } else {
       nextSquares[i] = 'O';
     }
-    onPlay(nextSquares);
+    onPlay(nextSquares,i);
   }
 
   const winner = calculateWinner(squares);
@@ -57,15 +57,16 @@ function Board({ xIsNext, squares, onPlay }: { xIsNext: boolean; squares: string
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState([{squares: Array(9).fill(null), index: -1}]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove].squares;
   const [ascending, setAscending] = useState(true);
   const displayOrder = ascending ? "Ascending" : "Descending";
 
-  function handlePlay(nextSquares: string[]) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  function handlePlay(nextSquares: string[], i: number) {
+    const nextHistory = [...history.slice(0, currentMove + 1), 
+      { squares: nextSquares, index: i }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
@@ -78,10 +79,13 @@ export default function Game() {
     setAscending(!ascending);
   }
 
-  const moves = history.map((squares, move) => {
+  const moves = history.map((turnInfo, move) => {
     let description;
     if (move > 0) {
-      description = 'Go to move #' + move;
+      const row = Math.floor(turnInfo.index / 3);
+      const col = turnInfo.index % 3;
+      const player = turnInfo.index % 2 === 0 ? 'X' : 'O';
+      description = 'Go to move #' + move + ' - ' + player + '(' + row + ', ' + col + ')';
     } else {
       description = 'Go to game start';
     }
